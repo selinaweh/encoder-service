@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from starlette.responses import Response
+import base64
 from src.api.myapi.conversion_model import ConversionResponse
 from src.service.encoder_service import convert_audio
 from src.settings.error_messages import FILE_CONVERSION_ERROR, UNSUPPORTED_FORMAT_ERROR
@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 
-@router.post("/convert", response_model=ConversionResponse, response_model_exclude_none=True)
+@router.post("/convert", response_model=ConversionResponse)
 def convert_audio_endpoint(src_format: str, target_format: str, file: UploadFile = File(...)):
     valid_target_formats = ["wav", "flac", "ogg"]
     if target_format not in valid_target_formats:
@@ -17,8 +17,9 @@ def convert_audio_endpoint(src_format: str, target_format: str, file: UploadFile
 
     try:
         input_data = file.file.read()
-        #input_data = await file.read()
         output_data = convert_audio(input_data, src_format, target_format)
-        return Response(content=output_data, media_type=f"audio/{target_format}")
+        base64_encoded_output = base64.b64encode(output_data).decode('utf-8')
+        conversion_response = ConversionResponse(file_type=target_format, content=base64_encoded_output)
+        return conversion_response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"{FILE_CONVERSION_ERROR}: {str(e)}")
