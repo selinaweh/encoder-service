@@ -17,9 +17,9 @@ def convert_audio_endpoint(src_format: str, target_format: str, file: UploadFile
 
     try:
         input_data = file.file.read()
-        print(input_data)
+        print(f"input_data:{input_data}")
         output_data = convert_audio(input_data, src_format, target_format)
-        print(output_data)
+        print(f"output_data: {output_data}")
         base64_encoded_output = base64.b64encode(output_data).decode('utf-8')
         conversion_response = ConversionResponse(file_type=target_format, content=base64_encoded_output)
         return conversion_response
