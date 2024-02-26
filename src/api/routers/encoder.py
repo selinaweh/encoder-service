@@ -10,8 +10,7 @@ router = APIRouter(
 
 
 @router.post("/convert", response_model=ConversionResponse, response_model_exclude_none=True)
-def convert_audio_endpoint(target_format: str, file: UploadFile = File(...)):
-    src_format = "mp3"
+def convert_audio_endpoint(src_format: str, target_format: str, file: UploadFile = File(...)):
     valid_target_formats = ["wav", "flac", "ogg"]
     if target_format not in valid_target_formats:
         raise HTTPException(status_code=400, detail=UNSUPPORTED_FORMAT_ERROR)
