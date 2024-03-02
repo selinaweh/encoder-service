@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field, model_validator
 import json
-from typing import Optional
+
+from pydantic import BaseModel, model_validator
 
 
 class InputModel(BaseModel):
